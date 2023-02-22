@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react'
+import ColorList from './components/ColorList'
+import AddColorForm from './components/AddColorForm'
+import colorData from './color-data.json'
+import {v4} from 'uuid'
 
 function App() {
+  const [colors, setColors] = useState(colorData)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <AddColorForm
+        onNewColor={(title, color) => {
+          const newColors = [
+            ...colors,
+            {
+              id: v4(),
+              rating: 0,
+              title,
+              color,
+            },
+          ]
+          setColors(newColors)
+        }}
+      />
+      <ColorList
+        colors={colors}
+        onRemoveColor={(id) => {
+          const newColors = colors.filter((color) => color.id !== id)
+          setColors(newColors)
+        }}
+        onRateColor={(id, rating) => {
+          const newColors = colors.map((color) => {
+            return color.id === id ? {...color, rating} : color
+          })
+          setColors(newColors)
+        }}
+      />
+    </>
+  )
 }
 
-export default App;
+export default App
